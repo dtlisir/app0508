@@ -1,3 +1,4 @@
 from django.contrib import admin
+from job_app.models import Script
 
-# Register your models here.
+admin.site.register(Script)
