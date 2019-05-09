@@ -45,6 +45,7 @@ BROKER_URL_DEV = 'amqp://guest:guest@127.0.0.1:5672/'
 # TOCHANGE 调用celery任务的文件路径, List of modules to import when celery starts.
 CELERY_IMPORTS = (
     'home_application.celery_tasks',
+    'job_app.views',
 )
 
 # ==============================================================================
@@ -104,7 +105,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'account.middlewares.LoginMiddleware',   # 登录鉴权中间件
-    'common.middlewares.CheckXssMiddleware',  # Xss攻击处理中间件
+    # 'common.middlewares.CheckXssMiddleware',  # Xss攻击处理中间件
 )
 
 INSTALLED_APPS = (
