@@ -17,6 +17,8 @@
           rel="stylesheet">
     <!-- font-awesome -->
     <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/fontawesome/css/font-awesome.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css"
+          rel="stylesheet">
     <!--蓝鲸提供的公用样式库 -->
     <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk.css" rel="stylesheet">
     <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk_pack.css" rel="stylesheet">
@@ -29,11 +31,15 @@
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/kendoui-2015.2.624/js/kendo.all.min.js"></script>
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/echarts-2.0/echarts-all.js"></script>
     <script src="https://magicbox.bk.tencent.com/static_api/v3/bk/js/bk.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
     <!-- 数据埋点统计 -->
     <script src="http://magicbox.bk.tencent.com/static_api/analysis.js"></script>
-    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
-    <!--[if lt IE 9]><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/respond.min.js"></script>
-    <![endif]-->
+    <script type="text/javascript">
+        var app_id = "${APP_ID}";
+        var site_url = "${SITE_URL}";	  // app的url前缀,在ajax调用的时候，应该加上该前缀
+        var static_url = "${STATIC_URL}"; // 静态资源前缀
+    </script>
+    <script src="${STATIC_URL}js/settings.js?v=${STATIC_VERSION}" type="text/javascript"></script>
 </head>
 
 <body class="bg-white" data-bg-color="bg-white">
@@ -101,7 +107,7 @@
                         <div class="col-sm-9">
                             <select name="" id="biz_id" class="form-control bk-valign-top">
                                 % for biz in biz_list:
-                                    <option value="${biz['id']}}">${biz['name']}</option>
+                                    <option value="${biz['id']}">${biz['name']}</option>
                                 % endfor
                             </select>
                         </div>
@@ -109,23 +115,23 @@
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">选择脚本：</label>
                         <div class="col-sm-9">
-                            <select name="" id="" class="form-control bk-valign-top">
-                                <option value="选择项1">选择项1</option>
-                                <option value="选择项2">选择项2</option>
-                                <option value="选择项3">选择项3</option>
-                                <option value="选择项4">选择项4</option>
+                            <select name="" id="script_type" class="form-control bk-valign-top">
+                                % for script in scripts:
+                                    <option value="${script.id}">${script.name}</option>
+                                % endfor
+
                             </select>
                         </div>
                     </div>
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">脚本参数：</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control bk-valign-top" id="" placeholder="可选"></div>
+                            <input type="text" class="form-control bk-valign-top" id="script_param" placeholder="可选">
+                        </div>
                     </div>
                     <div class="form-group clearfix">
                         <div class="col-sm-9 col-sm-offset-3">
-                            <button type="button" class="king-btn mr10  king-success">提交</button>
-                            <button type="button" class="king-btn king-default ">取消</button>
+                            <button type="button" class="king-btn mr10  king-success" id="submit">提交</button>
                         </div>
                     </div>
                 </form>
@@ -149,171 +155,92 @@
                                 <th style="width: 25px">
                                     <input type="checkbox" name="checkall" value="">
                                 </th>
-                                <th style="width: 100px">FuncID</th>
-                                <th style="width:25%">key</th>
-                                <th style="width:25%">作用域</th>
-                                <th style="width:15%">值</th>
-                                <th>操作</th>
+                                <th style="width: 150px">IP</th>
+                                <th style="width:30%">操作系统</th>
+                                <th style="width:30%">云区域ID</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="host-tbody">
 
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
-                    <script type="text/javascript">
-                        $('#table_demo2').find('input[name="checkall"]').click(function () {
-                            var checked = $(this).prop('checked');
-                            $('#table_demo2>tbody input').prop('checked', checked);
-                        });
-                        $('#table_demo2').find(':checkbox').on('click', function () {
-                            if (!this.checked) {
-                                $('#table_demo2').find('input[name="checkall"]').prop('checked', false);
-                            }
-                        });
-                        $('#table_demo2').find('.glyphicon-remove').parent('button').click(function () {
-                            if (confirm('确定要删除？')) {
-                                $(this).closest('tr').remove();
-                            }
-                        });
-                    </script>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $(function () {
-        function renderTpl(str, cfg) {
-            var re = /(#(.+?)#)/g;
-
-            return str.replace(re, function () {
-                var val = cfg[arguments[2]] + '';
-                if (typeof val == 'undefined') {
-                    val = '';
-                }
-                return val;
-            });
-        }
-
-        // 异步请求后台数据
+    function get_host() {
         $.ajax({
-            url: 'https://magicbox.bk.tencent.com/static_api/v3/components/table7/data.json',
+            url: '${ SITE_URL }api/get_hosts',
             type: 'GET',
+            data: {"biz_id": $("#biz_id").val()},
             success: function (res) {
-                var _html = ' ';
-                var list = res.items;
-                var tpl = $('#tpl_15572990586012').html();
-                var headerTpl = $('#header_tpl_15572990586012').html();
-                for (var i = 0, len = list.length; i < len; i++) {
-                    var item = list[i];
-                    _html += renderTpl(tpl, item)
+                if (res.result) {
+                    $('#table_demo2 tbody').html(res.data)
+                    //init_table();
+                } else {
+                    alert(res.message);
                 }
-                $('.ranger-box2 tbody').html(_html);
-                $('.ranger-box2 thead').html(renderTpl(headerTpl, res.catalogues));
+                //$('#table_demo2 tbody').html(_html);
+                // initTableCheckbox();
             }
+        });
+    }
+
+    function submitSuccess() {
+        var d = dialog({
+            width: 260,
+            title: '操作提示',
+            ok: function () {
+                location.href = "${SITE_URL}history/"
+            },
+            okValue: '查看执行结果',
+            content: '<div class="king-notice-box king-notice-success"><p class="king-notice-text">任务提交成功！</p></div>',
+            cancelValue: '继续执行任务',
+            cancel: function () {
+                // do something
+            }
+        });
+        d.showModal();
+    }
+
+    $(function () {
+        get_host();
+        $("#biz_id").change(function () {
+            get_host();
+        });
+        $('#table_demo2').find('input[name="checkall"]').click(function () {
+            var checked = $(this).prop('checked');
+            $('#table_demo2>tbody input').prop('checked', checked);
+        });
+        $('#submit').click(function (event) {
+            var records = $('#table_demo2>tbody input:checked').closest('tr');
+            if (!records.length) {
+                alert('请选择要执行的机器！');
+                return false;
+            }
+            var ips = [];
+            for (i = 0; i < records.length; i++) {
+                let ip = $($(records[i]).find('.ip')).text();
+                ips.push(ip)
+            }
+            // console.log(ips);
+            var biz_id = $("#biz_id").val();
+            var script_type = $("#script_type").val();
+            $.post('${SITE_URL}api/execute/', {
+                'biz_id': biz_id,
+                'ips': ips,
+                'script_param': $("#script-param").val(),
+                'script_type': script_type
+            }, function (data) {
+                if (data.result) {
+                    submitSuccess();
+                } else {
+                    alert("获取失败")
+                }
+            }, 'json');
         });
     });
 </script>

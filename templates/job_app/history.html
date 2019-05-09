@@ -17,9 +17,34 @@
           rel="stylesheet">
     <!-- font-awesome -->
     <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/fontawesome/css/font-awesome.css" rel="stylesheet">
-    <!--蓝鲸提供的公用样式库 -->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker.css"
+          rel="stylesheet">
     <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk.css" rel="stylesheet">
     <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk_pack.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/datatables-1.10.7/dataTables.bootstrap.css"
+          rel="stylesheet"/>
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css"
+          rel="stylesheet">
+    <style>
+        .form-horizontal .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        .log-content {
+            background-color: #f0f8ff;
+            overflow: auto;
+            height: 100%;
+            padding: 10px;
+        }
+
+        .ip-start, .ip-end {
+            border-bottom: dashed 1px;
+            margin-bottom: 5px;
+        }
+
+    </style>
     <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
     <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
@@ -28,12 +53,20 @@
     <!-- 包括所有kendoui的js插件或者可以根据需要使用的js插件调用　-->
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/kendoui-2015.2.624/js/kendo.all.min.js"></script>
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/echarts-2.0/echarts-all.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/moment.min.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/datatables-1.10.7/jquery.dataTables.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/datatables-1.10.7/dataTables.bootstrap.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
     <script src="https://magicbox.bk.tencent.com/static_api/v3/bk/js/bk.js"></script>
     <!-- 数据埋点统计 -->
     <script src="http://magicbox.bk.tencent.com/static_api/analysis.js"></script>
-    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
-    <!--[if lt IE 9]><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/respond.min.js"></script>
-    <![endif]-->
+    <script type="text/javascript">
+        var app_id = "${APP_ID}";
+        var site_url = "${SITE_URL}";	  // app的url前缀,在ajax调用的时候，应该加上该前缀
+        var static_url = "${STATIC_URL}"; // 静态资源前缀
+    </script>
+    <script src="${STATIC_URL}js/settings.js?v=${STATIC_VERSION}" type="text/javascript"></script>
 </head>
 
 <body class="bg-white" data-bg-color="bg-white">
@@ -99,45 +132,46 @@
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">业务：</label>
                         <div class="col-sm-9">
-                            <select name="" id="" class="form-control bk-valign-top">
-                                <option value="选择项1">选择项1</option>
-                                <option value="选择项2">选择项2</option>
-                                <option value="选择项3">选择项3</option>
-                                <option value="选择项4">选择项4</option>
+                            <select name="" id="biz_list" class="form-control bk-valign-top">
+                                <option value="all">所有业务</option>
+                                % for biz in biz_list:
+                                    <option value="${biz['id']}">${biz['name']}</option>
+                                % endfor
                             </select>
                         </div>
                     </div>
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">用户：</label>
                         <div class="col-sm-9">
-                            <select name="" id="" class="form-control bk-valign-top">
-                                <option value="选择项1">选择项1</option>
-                                <option value="选择项2">选择项2</option>
-                                <option value="选择项3">选择项3</option>
-                                <option value="选择项4">选择项4</option>
+                            <select name="" id="operators" class="form-control bk-valign-top">
+                                <option value="all">所有用户</option>
+                                % for operator in operators:
+                                    <option value="${operator}">${operator}</option>
+                                % endfor
                             </select>
                         </div>
                     </div>
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">任务：</label>
                         <div class="col-sm-9">
-                            <select name="" id="" class="form-control bk-valign-top">
-                                <option value="选择项1">选择项1</option>
-                                <option value="选择项2">选择项2</option>
-                                <option value="选择项3">选择项3</option>
-                                <option value="选择项4">选择项4</option>
+                            <select name="" id="scripts" class="form-control bk-valign-top">
+                                <option value="all">所有任务</option>
+                                % for script in scripts:
+                                    <option value="${script.id}">${script.name}</option>
+                                % endfor
                             </select>
                         </div>
                     </div>
                     <div class="form-group clearfix ">
                         <label class="col-sm-3 control-label bk-lh30 pt0">时间：</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control bk-valign-top" id="" placeholder="提示信息"></div>
+                            <input type="text" class="form-control daterangepicker_demo" id="daterangepicker_demo3"
+                                   placeholder="选择日期...">
+                        </div>
                     </div>
                     <div class="form-group clearfix">
                         <div class="col-sm-9 col-sm-offset-3">
-                            <button type="button" class="king-btn mr10  king-success">提交</button>
-                            <button type="button" class="king-btn king-default ">取消</button>
+                            <button type="button" class="king-btn mr10  king-success" id="search_history">查询</button>
                         </div>
                     </div>
                 </form>
@@ -153,201 +187,176 @@
                 <h3 class="king-block-title">任务记录</h3>
             </div>
             <div class="king-block-content">
-                <div class="panel panel-default pannel-overflow panel-tables table7_demo">
-                    <div class="panel-content">
-                        <table class="table table-header-bg table-hover mb0" id="table_demo2">
-                            <thead>
-                            <tr>
-                                <th style="width: 25px">
-                                    <input type="checkbox" name="checkall" value="">
-                                </th>
-                                <th style="width: 100px">FuncID</th>
-                                <th style="width:25%">key</th>
-                                <th style="width:25%">作用域</th>
-                                <th style="width:15%">值</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" value="">
-                                </td>
-                                <td>1</td>
-                                <td>TclsWorldID</td>
-                                <td>s1.*.*.*</td>
-                                <td>abc</td>
-                                <td>
-                                    <button class="btn btn-xs btn-primary" title="编辑">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </button>
-                                    <button class="btn btn-xs btn-danger" title="删除">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <td colspan="6">
-                                    <div class="pull-left">
-                                        <a class="king-btn king-radius king-danger ml10" id="deleteAll"
-                                           title="删除">删除</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <script type="text/javascript">
-                        $('#table_demo2').find('input[name="checkall"]').click(function () {
-                            var checked = $(this).prop('checked');
-                            $('#table_demo2>tbody input').prop('checked', checked);
-                        });
-                        $('#table_demo2').find(':checkbox').on('click', function () {
-                            if (!this.checked) {
-                                $('#table_demo2').find('input[name="checkall"]').prop('checked', false);
-                            }
-                        });
-                        $('#table_demo2').find('.glyphicon-remove').parent('button').click(function () {
-                            if (confirm('确定要删除？')) {
-                                $(this).closest('tr').remove();
-                            }
-                        });
-                        $('#deleteAll').click(function (event) {
-                            var records = $('#table_demo2>tbody input:checked').closest('tr');
-                            if (!records.length) {
-                                alert('请选择要删除的记录！');
-                                return false;
-                            }
-                            if (confirm('确定要删除？')) {
-                                records.remove();
-                            }
-                        });
-                    </script>
-                </div>
+                <table id="table2_demo1" class="table table-bordered table-hover dataTable no-footer" role="grid">
+                    <thead>
+                    <tr role="row">
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">业务</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">用户</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 20%;">任务</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 20%;">操作时间</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">机器数</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">状态</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">参数</th>
+                        <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 10%;">详情</th>
+                    </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
 </div>
-<script>
-    $(function () {
-        function renderTpl(str, cfg) {
-            var re = /(#(.+?)#)/g;
-
-            return str.replace(re, function () {
-                var val = cfg[arguments[2]] + '';
-                if (typeof val == 'undefined') {
-                    val = '';
-                }
-                return val;
-            });
-        }
-
-        // 异步请求后台数据
-        $.ajax({
-            url: 'https://magicbox.bk.tencent.com/static_api/v3/components/table7/data.json',
-            type: 'GET',
-            success: function (res) {
-                var _html = ' ';
-                var list = res.items;
-                var tpl = $('#tpl_15572990586012').html();
-                var headerTpl = $('#header_tpl_15572990586012').html();
-                for (var i = 0, len = list.length; i < len; i++) {
-                    var item = list[i];
-                    _html += renderTpl(tpl, item)
-                }
-                $('.ranger-box2 tbody').html(_html);
-                $('.ranger-box2 thead').html(renderTpl(headerTpl, res.catalogues));
-            }
-        });
+<script type="text/javascript">
+    // 综合示例
+    $('#daterangepicker_demo3').daterangepicker({
+        "showDropdowns": true,//显示年，月下拉选择框
+        "showWeekNumbers": true,//显示第几周
+        "timePicker": true,//时间选择
+        "timePicker24Hour": true,//24小时制
+        "timePickerIncrement": 1,//时间间隔
+        "timePickerSeconds": true,
+        "dateLimit": { //可选择的日期范围
+            "days": 30
+        },
+        "ranges": {
+            "前7天": [moment().subtract(6, 'days'), moment()],
+            "前30天": [moment().subtract(29, 'days'), moment()],
+            "本月": [moment().startOf('month'), moment().endOf('month')],
+            "上个月": [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+        },
+        "locale": {
+            "format": "YYYY-MM-DD HH:mm:ss",// 日期格式
+            "separator": "~",
+            "applyLabel": "确定",
+            "cancelLabel": "取消",
+            "fromLabel": "从",
+            "toLabel": "到",
+            "weekLabel": '周',
+            "customRangeLabel": "自定义",
+            "daysOfWeek": [
+                "日",
+                "一",
+                "二",
+                "三",
+                "四",
+                "五",
+                "六"
+            ],
+            "monthNames": [
+                "一月",
+                "二月",
+                "三月",
+                "四月",
+                "五月",
+                "六月",
+                "七月",
+                "八月",
+                "九月",
+                "十月",
+                "十一月",
+                "十二月"
+            ],
+            "firstDay": 1// 周开始时间
+        },
+        // "startDate": "2015-07-01 10:35:20",
+        // "endDate": "2015-08-15 10:35:20",
+        "opens": "center",//left/center/right
+        // "drops": "up",//选择框出现的位置 up/down
+        "buttonClasses": "btn btn-sm",//按钮通用样式
+        "applyClass": "btn-success",//确定按钮样式
+        "cancelClass": "btn-default"//取消按钮样式
     });
+    var table = $('#table2_demo1').DataTable({
+        autoWidth: true,
+        processing: true,
+        paging: true, //隐藏分页
+        ordering: false, //关闭排序
+        info: true, //隐藏左下角分页信息
+        searching: false, //关闭搜索
+        pageLength: 5, //每页显示几条数据
+        lengthChange: false, //不允许用户改变表格每页显示的记录数
+        columns: [
+            {data: "biz"},
+            {data: "user"},
+            {data: "script"},
+            {data: "start_time"},
+            {data: "machine_numbers"},
+            {
+                data: "status",
+                render: function (data, type, row, meta) {
+                    // http://magicbox.bk.tencent.com/#detail/show?id=list1&isPro=0
+                    var color = {
+                        'successed': 'king-success',
+                        'running': 'king-warning',
+                        'failed': 'king-danger',
+                        'queue': 'king-info',
+                        'finished': 'king-primary',
+                    }[data];
+                    return '<span class="badge ' + color + '">' + data + '</span>'
+                }
+            },
+            {data: "argument"},
+            {
+                data: null,
+                orderable: false,
+                render: function (data, type, row, meta) {
+                    return '<a class="king-btn king-default del" href="javascript: get_log(' + data.id + ');">详情</a>';
+                }
+            }
+        ],
+        ajax: {
+            url: "${SITE_URL}api/get_operations/",
+            dataSrc: "data",
+            data: function (d) {
+                return $.extend({}, d, {
+                    "biz": $("#biz_list").val(),
+                    "operator": $("#operators").val(),
+                    "script": $("#scripts").val(),
+                    "timerange": $("#daterangepicker_demo3").val()
+                });
+            }
+        },
+
+        language: {
+            search: '搜索：',
+            processing: '加载中',
+            lengthMenu: "每页显示 _MENU_ 记录",
+            zeroRecords: "没找到相应的数据！",
+            info: "分页 _PAGE_ / _PAGES_",
+            infoEmpty: "暂无数据！",
+            infoFiltered: "(从 _MAX_ 条数据中搜索)",
+            paginate: {
+                first: '首页',
+                last: '尾页',
+                previous: '上一页',
+                next: '下一页',
+            }
+        }
+    });
+    $('#search_history').click(function () {
+        table.ajax.reload();
+    });
+    function get_log(celery_id) {
+        console.log(celery_id)
+        var url = '${SITE_URL}' + 'api/get_log/' + celery_id + '/';
+        $.get(url, {}, function (res) {
+            if (res.result) {
+                show_log(res.data);
+            } else {
+                alert(res.message);
+            }
+        })
+    }
+    function show_log(log_content) {
+        var d = dialog({
+            width: 800,
+            height: 500,
+            padding: 0,
+            //quickClose: true,
+            title: '日志详情',
+            content: log_content,
+        });
+        d.showModal();
+    }
 </script>
 </body>
 
